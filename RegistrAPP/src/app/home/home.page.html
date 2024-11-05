@@ -1,0 +1,41 @@
+<ion-menu contentId="menu-content" menuId="menu-content" side="start" type="overlay">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Opciones</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <ion-item routerLink="/mis-asignatura">
+      <ion-icon slot="start" name="book"></ion-icon>
+      <ion-label>Mis asignaturas</ion-label>
+    </ion-item>
+    <ion-item routerLink="/mis-asis">
+      <ion-icon slot="start" name="book"></ion-icon>
+      <ion-label>Mis asistencias</ion-label>
+    </ion-item>
+    <ion-item routerLink="/reg-asis">
+      <ion-icon slot="start" name="book"></ion-icon>
+      <ion-label>Registrar asistencia</ion-label>
+    </ion-item>
+    <ion-item routerLink="/cambiar-cla">
+      <ion-icon slot="start" name="book"></ion-icon>
+      <ion-label>Cambiar clave</ion-label>
+    </ion-item>
+
+  </ion-content>
+</ion-menu>
+
+<div class="ion-page" id="menu-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Inicio</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-text-center">
+    <h1>Bienvenido {{usuario.nombreUsuario}}!!!</h1>
+  </ion-content>
+</div>

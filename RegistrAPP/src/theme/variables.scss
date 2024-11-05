@@ -1,0 +1,22 @@
+// For information on how to create your own theme, please see:
+// http://ionicframework.com/docs/theming/
+
+
+
+
+body.barcode-scanning-active {
+    visibility: hidden;
+    --background: transparent;
+    --ion-background-color: transparent;
+}
+
+.barcode-scanning-modal {
+    visibility: visible;
+}
+
+@media (preder-color-scheme: dark) {
+    body.barcode-scanning-active {
+        --background: #000;
+        --ion-background-color: #000;
+    }
+}

@@ -1,0 +1,58 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Registro de Asistencia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Registro de Asistencia</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-card *ngIf="mode === 'generate'">
+    <ion-card-header>
+      <ion-card-title>Generar Código QR</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Código de Asistencia</ion-label>
+        <ion-input type="text" [(ngModel)]="valor"></ion-input>
+      </ion-item>
+      <qrcode [qrdata]="valor" [width]="350"></qrcode>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="mode === 'scan'">
+    <ion-card-header>
+      <ion-card-title>Escanear Código QR</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+
+      <ion-row>
+        <ion-col size="12">
+          <ion-button (click)="startScan()" class="submit" expand="block">
+            Scan
+            <ion-icon slot="end" name="scan-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+      <ion-item class="result" *ngIf="scanResult" lines="none">
+        <ion-label>
+          <p>Scan Result</p>
+          <div>{{scanResult}} </div>
+        </ion-label>
+      </ion-item>
+
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="block" color="primary" (click)="toggleMode()">
+    {{ mode === 'generate' ? 'Escanear QR' : 'Generar QR' }}
+  </ion-button>
+</ion-content>
