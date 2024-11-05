@@ -1,0 +1,68 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "juan",
+            "role": "alumno",
+            "clave": "12345"
+        },
+        {
+            "id": 2,
+            "name": "ana",
+            "role": "alumno",
+            "clave": "12345"
+        },
+        {
+            "id": 3,
+            "name": "Pedro",
+            "role": "profesor",
+            "clave": "12345"
+        },
+        {
+            "id": 4,
+            "name": "diego",
+            "role": "profesor",
+            "clave": "12345"
+        }
+    ],
+    "classes": [
+        {
+            "id": 1,
+            "name": "matematicas",
+            "code": "mta123"
+        },
+        {
+            "id": 2,
+            "name": "lenguaje",
+            "code": "lng456"
+        }
+    ],
+    "assignments": [
+        {
+            "classId": 1,
+            "professorId": 3
+        },
+        {
+            "classId": 2,
+            "professorId": 4
+        }
+    ],
+    "enrollments": [
+        {
+            "classId": 1,
+            "studentId": 1
+        },
+        {
+            "classId": 1,
+            "studentId": 2
+        },
+        {
+            "classId": 2,
+            "studentId": 1
+        },
+        {
+            "classId": 2,
+            "studentId": 2
+        }
+    ]
+}

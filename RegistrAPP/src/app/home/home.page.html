@@ -22,7 +22,6 @@
       <ion-icon slot="start" name="book"></ion-icon>
       <ion-label>Cambiar clave</ion-label>
     </ion-item>
-
   </ion-content>
 </ion-menu>
 
@@ -33,9 +32,12 @@
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
       <ion-title>Inicio</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="logout()">Logout</ion-button>
+      </ion-buttons>
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-text-center">
-    <h1>Bienvenido {{usuario.nombreUsuario}}!!!</h1>
+    <h1>Bienvenido, {{ currentUser.name }}!!!</h1>
   </ion-content>
 </div>

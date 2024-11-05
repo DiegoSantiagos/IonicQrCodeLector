@@ -1,32 +1,25 @@
-import { Component } from '@angular/core';
-
-interface Usuario {
-  nombreUsuario: string;
-  idUsuario?: number;
-}
-
-interface Asignatura {
-  nombre: string;
-  siglas: string;
-}
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
+  currentUser: any;
 
-  usuario: Usuario = {
-    nombreUsuario: 'Diego',
-    idUsuario: 1,
-  };
+  constructor(private authService: AuthService,
+    private router: Router
+  ) { }
 
-  asignaturas: Asignatura[] = [
-    { nombre: 'Matemáticas', siglas: 'mdi112' },
-    { nombre: 'Ciencias', siglas: 'sci233' },
-  ];
+  ngOnInit() {
+    this.currentUser = this.authService.getCurrentUser();
+  }
 
-  constructor() { }
-
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 }
