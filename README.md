@@ -1,58 +1,98 @@
 # IonicQrCodeLector
 
-    npm install -g @ionic/cli  
-<!--  -->
-    cmd
-<!--  -->
-    ionic
-<!--  -->
-    ionic start <Nombre> blank     # Cambiar por el nombre del proyecto
-<!--  -->
-    Seleccionar: Angular , NgModules
-<!--  -->
-    debe de estar librerías con capacitor
-<!--  -->
-    ionic serve      # inicia el proyecto
-<!--  -->
-    ionic generate    # Sirve para crear componentes
-<!--  -->
-    ionic generate page nombrePagina
-<!--  -->
-    ionic g page nombrePagina
-<!--  -->
-    npm install @ionic/storage
+## Instalación de dependencias
+
+```sh
+npm install
+```
+
+## Iniciar el proyecto
+
+```sh
+npm install -g @ionic/cli  
+```
+
+```sh
+cmd
+```
+
+```sh
+ionic
+```
+
+```sh
+ionic start <Nombre> blank     
+# Cambiar por el nombre del proyecto
+```
+
+Seleccionar: Angular , NgModules
+debe de estar librerías con capacitor
+
+```sh
+ionic serve   # inicia el proyecto
+```
+
+```sh
+ionic generate  # Sirve para crear componentes
+```
+
+```sh
+ionic generate page nombrePagina
+```
+
+```sh
+ionic g page nombrePagina
+```
+
+```sh
+npm install @ionic/storage
+```
 
 ## Android
 
 - instalar android
   
-        npm install @capacitor/android
+```sh
+npm install @capacitor/android
+```
 
 - agregar android
-  
-        npx cap add android
+
+```sh
+npx cap add android
+```
 
 - sincronizar
-  
-        npx cap sync
+
+```sh
+npx cap sync
+```
 
 - abrir
   
-        npx cap open android
+```sh
+npx cap open android
+```
 
 ## QrCode
 
 - Scanner
-
-        npm install @capacitor-mlkit/barcode-scanning
+  
+```sh
+npm install @capacitor-mlkit/barcode-scanning
+```
 
 - Generador
   
-        npm install angularx-qrcode --save
+```sh
+npm install angularx-qrcode --save
+```
 
 ## Jsonserver
 
+```sh
 npm install -g json-server
+```
 
 ### crear carpeta jsonserver
 
@@ -80,17 +120,24 @@ npm install -g json-server
 }
 ```
 
+```sh
 json-server --watch db.json
+```
 
 ## Geolocalización
 
-### (Opcional)
 
-        npm install @ionic-native/geolocation
-<!--  -->
+(Opcional)
 
-        npm install @ionic-native/core
-<!--  -->
 
-        npm install @ionic-native/google-maps
+```sh
+npm install @ionic-native/geolocation
+```
 
+```sh
+npm install @ionic-native/core
+```
+
+```sh
+npm install @ionic-native/google-maps
+```
