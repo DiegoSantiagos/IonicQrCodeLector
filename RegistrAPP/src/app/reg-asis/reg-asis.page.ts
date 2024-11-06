@@ -72,7 +72,7 @@ export class RegAsisPage implements OnInit {
           classes => {
             if (classes.length > 0) {
               if (this.currentUser.id && assignment.classId && currentDate && currentHour) {
-                this.valorQr = `${this.currentUser.id}-${assignment.classId}-${currentDate}-${currentHour}`;
+                this.valorQr = `${this.currentUser.id},${assignment.classId},${currentDate},${currentHour}`;
                 console.log('QR Code generated:', this.valorQr);
               } else {
                 console.error('Uno de los valores está vacío:', {
@@ -118,25 +118,36 @@ export class RegAsisPage implements OnInit {
     }
   }
 
-  registrarAsistencia(scanResult: string) {
-    const [professorId, classId, date, hour] = scanResult.split('-');
-    const asistencia = {
-      alumno: this.currentUser.name,
-      classId: parseInt(classId, 10),
-      date,
-      hour,
-      asistencia: 'presente'
-    };
+  async registrarAsistencia(qrCode: string) {
+    if (qrCode) {
+      const [userId, classId, date, hour] = qrCode.split(',');
 
-    this.asistenciaService.registrarAsistencia(asistencia).subscribe(
-      response => {
-        this.showToast('Asistencia registrada', 'success');
-      },
-      error => {
-        this.showToast('Error al registrar la asistencia', 'danger');
-      }
-    );
+      const asistenciaData = {
+        classId: parseInt(classId, 10),
+        studentId: parseInt(userId, 10),
+        date: date,
+        asistencia: 'presente',
+        horaInicio: hour,
+        id: this.generateUniqueId()
+      };
+
+      this.http.post('http://totem-tunel.uri1000.win/asistencias', asistenciaData).subscribe(
+        response => {
+          this.showToast('Asistencia registrada exitosamente', 'success');
+        },
+        async error => {
+          this.showToast('Error al registrar la asistencia: ' + error.message, 'danger');
+        }
+      );
+    } else {
+      this.showToast('Código QR inválido', 'warning');
+    }
   }
+
+  generateUniqueId() {
+    return Math.random().toString(36).substr(2, 9);
+  }
+
 
   marcarAusentes() {
     const currentDate = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
