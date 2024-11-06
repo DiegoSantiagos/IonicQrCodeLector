@@ -20,9 +20,9 @@ export class RecontraPage implements OnInit {
   ngOnInit() {
   }
 
-  async changePassword() {
+  async recuperarContra() {
     if (this.username && this.newPassword) {
-      this.authService.changePassword(this.username, this.newPassword).subscribe(response => {
+      this.authService.recuperarContra(this.username, this.newPassword).subscribe(response => {
         if (response.success) {
           this.showToast('Contraseña cambiada exitosamente', 'success');
         } else {

@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class HomePage implements OnInit {
   currentUser: any;
+  userRole: string = '';
 
   constructor(private authService: AuthService,
     private router: Router
@@ -16,6 +17,13 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
+
+    this.currentUser = this.authService.getCurrentUser();
+    if (!this.currentUser || !this.currentUser.id) {
+      console.error('Usuario no autenticado o sin ID');
+      return;
+    }
+    this.userRole = this.currentUser.role;
   }
 
   logout() {

@@ -6,11 +6,11 @@
   </ion-header>
 
   <ion-content>
-    <ion-item routerLink="/mis-asignatura">
+    <ion-item *ngIf="userRole === 'alumno'" routerLink="/mis-asignatura">
       <ion-icon slot="start" name="book"></ion-icon>
       <ion-label>Mis asignaturas</ion-label>
     </ion-item>
-    <ion-item routerLink="/mis-asis">
+    <ion-item *ngIf="userRole === 'alumno'" routerLink="/mis-asis">
       <ion-icon slot="start" name="book"></ion-icon>
       <ion-label>Mis asistencias</ion-label>
     </ion-item>

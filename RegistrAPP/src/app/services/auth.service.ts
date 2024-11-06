@@ -28,7 +28,7 @@ export class AuthService {
     );
   }
 
-  changePassword(username: string, newPassword: string): Observable<{ success: boolean, error?: string }> {
+  recuperarContra(username: string, newPassword: string): Observable<{ success: boolean, error?: string }> {
     return this.http.get<any[]>(`${this.apiUrl}?name=${username}`).pipe(
       switchMap(users => {
         if (users.length === 0) {
@@ -54,4 +54,18 @@ export class AuthService {
     // Obtener el usuario del almacenamiento local
     return JSON.parse(localStorage.getItem('currentUser') || '{}');
   }
+
+  changePassword(newPassword: string): Observable<any> {
+    const currentUser = this.getCurrentUser();
+    if (currentUser && currentUser.id) {
+      currentUser.clave = newPassword;
+      return this.http.put(`${this.apiUrl}/${currentUser.id}`, currentUser);
+    } else {
+      return new Observable(observer => {
+        observer.error('No user is currently logged in');
+      });
+    }
+  }
+
+
 }

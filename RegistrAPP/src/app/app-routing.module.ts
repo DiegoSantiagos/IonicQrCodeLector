@@ -24,6 +24,10 @@ const routes: Routes = [
     path: 'recontra',
     loadChildren: () => import('./recontra/recontra.module').then( m => m.RecontraPageModule)
   },
+  {
+    path: 'cambiar-cla',
+    loadChildren: () => import('./cambiar-cla/cambiar-cla.module').then( m => m.CambiarClaPageModule)
+  },
 ];
 
 @NgModule({
