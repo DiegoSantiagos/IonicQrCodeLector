@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, catchError, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,17 +11,37 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(username: string, password: string): Observable<boolean> {
-    return this.http.get<any[]>(`${this.apiUrl}?name=${username}&clave=${password}`).pipe(
+  login(username: string, password: string): Observable<{ success: boolean, error?: string }> {
+    return this.http.get<any[]>(`${this.apiUrl}?name=${username}`).pipe(
       map(users => {
-        if (users.length > 0) {
-          // Almacenar el usuario en el almacenamiento local
-          localStorage.setItem('currentUser', JSON.stringify(users[0]));
-          return true;
-        } else {
-          return false;
+        if (users.length === 0) {
+          return { success: false, error: 'username' };
         }
-      })
+        const user = users[0];
+        if (user.clave !== password) {
+          return { success: false, error: 'password' };
+        }
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        return { success: true };
+      }),
+      catchError(() => of({ success: false, error: 'unknown' }))
+    );
+  }
+
+  changePassword(username: string, newPassword: string): Observable<{ success: boolean, error?: string }> {
+    return this.http.get<any[]>(`${this.apiUrl}?name=${username}`).pipe(
+      switchMap(users => {
+        if (users.length === 0) {
+          return of({ success: false, error: 'username' });
+        }
+        const user = users[0];
+        user.clave = newPassword;
+        return this.http.put(`${this.apiUrl}/${user.id}`, user).pipe(
+          map(() => ({ success: true })),
+          catchError(() => of({ success: false, error: 'update_failed' }))
+        );
+      }),
+      catchError(() => of({ success: false, error: 'unknown' }))
     );
   }
 

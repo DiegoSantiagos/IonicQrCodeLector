@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -17,7 +18,8 @@ export class LoginPage implements OnInit {
   constructor(
     private toastController: ToastController,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) { }
 
   ngOnInit() {
@@ -25,11 +27,27 @@ export class LoginPage implements OnInit {
 
 
   login() {
-    this.authService.login(this.username, this.password).subscribe(success => {
-      if (success) {
+    if (!this.username) {
+      this.showToast('Por favor ingrese el nombre de usuario');
+      return;
+    }
+
+    if (!this.password) {
+      this.showToast('Por favor ingrese la contraseña');
+      return;
+    }
+
+    this.authService.login(this.username, this.password).subscribe(response => {
+      if (response.success) {
         this.router.navigate(['/home']);
       } else {
-        this.showToast('Invalid username or password');
+        if (response.error === 'username') {
+          this.showToast('Nombre de usuario incorrecto');
+        } else if (response.error === 'password') {
+          this.showToast('Contraseña incorrecta');
+        } else {
+          this.showToast('Error desconocido');
+        }
       }
     });
   }
