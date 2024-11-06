@@ -73,7 +73,7 @@ export class RegAsisPage implements OnInit {
             if (classes.length > 0) {
               if (this.currentUser.id && assignment.classId && currentDate && currentHour) {
                 this.valorQr = `${this.currentUser.id},${assignment.classId},${currentDate},${currentHour}`;
-                console.log('QR Code generated:', this.valorQr);
+                console.log('QR Code generated:', this.valorQr, 'y los datos son los siguientes', this.currentUser.id, assignment.classId, currentDate, currentHour);
               } else {
                 console.error('Uno de los valores está vacío:', {
                   userId: this.currentUser.id,

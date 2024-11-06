@@ -12,7 +12,7 @@ interface Usuario {
 })
 export class UsuarioService {
 
-  private apiUrl = 'http://localhost:3000/usuarios'; // URL del json-server
+  private apiUrl = 'http://totem-tunel.uri1000.win/usuarios'; // URL del json-server
 
   constructor(private http: HttpClient) { }
 
