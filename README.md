@@ -82,6 +82,8 @@ npx cap open android
 
 - Scanner
   
+para poder usar el scaner debe de poner el archivo barcode-scanning.js en la carpeta de la app que lo requiera
+  
 ```sh
 npm install @capacitor-mlkit/barcode-scanning
 ```
