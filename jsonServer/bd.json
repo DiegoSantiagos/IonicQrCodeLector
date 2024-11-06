@@ -64,5 +64,31 @@
             "classId": 2,
             "studentId": 2
         }
+    ],
+    "asistencias": [
+        {
+            "classId": 1,
+            "studentId": 1,
+            "date": "2021-09-01",
+            "asistencia": "presente"
+        },
+        {
+            "classId": 1,
+            "studentId": 2,
+            "date": "2021-09-01",
+            "asistencia": "ausente"
+        },
+        {
+            "classId": 1,
+            "studentId": 1,
+            "date": "2021-09-02",
+            "asistencia": "presente"
+        },
+        {
+            "classId": 1,
+            "studentId": 2,
+            "date": "2021-09-02",
+            "asistencia": "ausente"
+        }
     ]
 }

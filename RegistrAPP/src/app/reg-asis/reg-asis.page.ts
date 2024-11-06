@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../usuario.service';
-import { ModalController, Platform } from '@ionic/angular';
+import { ModalController, Platform, ToastController } from '@ionic/angular';
 import { BarcodeScanningModalComponent } from './barcode-scanning-modal.component';
 import { LensFacing, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { AuthService } from '../services/auth.service';
 import { HttpClient } from '@angular/common/http';
+import { AsistenciaService } from '../services/asistencia.service';
 
 @Component({
   selector: 'app-reg-asis',
@@ -23,7 +24,9 @@ export class RegAsisPage implements OnInit {
   constructor(private modalController: ModalController,
     private plataform: Platform,
     private authService: AuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private asistenciaService: AsistenciaService,
+    private toastController: ToastController
   ) { }
 
   ngOnInit(): void {
@@ -63,7 +66,7 @@ export class RegAsisPage implements OnInit {
       this.http.get<any[]>(`https://totem-tunel.uri1000.win/classes?id=${assignment.classId}`).subscribe(classes => {
         if (classes.length > 0) {
           const classCode = classes[0].code;
-          this.valor = `${this.currentUser.name}-${classCode}-${currentDate}`;
+          this.valor = `${this.currentUser.id}-${assignment.classId}-${currentDate}`;
         }
       });
     }
@@ -76,7 +79,7 @@ export class RegAsisPage implements OnInit {
       showBackdrop: false,
       componentProps: {
         formats: [],
-        lensFacing: LensFacing.Back
+        lensFacing: 'back'
       }
     });
 
@@ -85,9 +88,66 @@ export class RegAsisPage implements OnInit {
     const { data } = await modal.onWillDismiss();
     if (data) {
       this.scanResult = data?.barcode?.displayValue;
+      this.registrarAsistencia(this.scanResult);
     }
   }
 
+  registrarAsistencia(scanResult: string) {
+    const [professorId, classId, date] = scanResult.split('-');
+    const asistencia = {
+      alumno: this.currentUser.name,
+      classId: parseInt(classId, 10),
+      date,
+      asistencia: 'presente'
+    };
 
+    this.asistenciaService.registrarAsistencia(asistencia).subscribe(
+      response => {
+        this.showToast('Asistencia registrada', 'success');
+      },
+      error => {
+        this.showToast('Error al registrar la asistencia', 'danger');
+      }
+    );
+  }
+
+  marcarAusentes() {
+    const currentDate = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
+    const assignment = this.assignments.find(a => a.professorId === this.currentUser.id);
+    if (assignment) {
+      this.http.get<any[]>(`https://totem-tunel.uri1000.win/enrollments?classId=${assignment.classId}`).subscribe(enrollments => {
+        enrollments.forEach(enrollment => {
+          this.http.get<any[]>(`https://totem-tunel.uri1000.win/asistencias?classId=${assignment.classId}&studentId=${enrollment.studentId}&date=${currentDate}`).subscribe(asistencias => {
+            if (asistencias.length === 0) {
+              const asistencia = {
+                alumno: enrollment.studentId,
+                classId: assignment.classId,
+                date: currentDate,
+                asistencia: 'ausente'
+              };
+              this.asistenciaService.registrarAsistencia(asistencia).subscribe(
+                response => {
+                  console.log('Asistencia ausente registrada:', response);
+                },
+                error => {
+                  console.error('Error al registrar asistencia ausente:', error);
+                }
+              );
+            }
+          });
+        });
+      });
+    }
+  }
+
+  async showToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      position: 'middle',
+      duration: 2000,
+      color
+    });
+    toast.present();
+  }
 }
 

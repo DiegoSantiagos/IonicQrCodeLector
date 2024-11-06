@@ -28,6 +28,14 @@ const routes: Routes = [
     path: 'cambiar-cla',
     loadChildren: () => import('./cambiar-cla/cambiar-cla.module').then( m => m.CambiarClaPageModule)
   },
+  {
+    path: 'mis-asignatura',
+    loadChildren: () => import('./mis-asignatura/mis-asignatura.module').then( m => m.MisAsignaturaPageModule)
+  },
+  {
+    path: 'mis-asis',
+    loadChildren: () => import('./mis-asis/mis-asis.module').then( m => m.MisAsisPageModule)
+  },
 ];
 
 @NgModule({

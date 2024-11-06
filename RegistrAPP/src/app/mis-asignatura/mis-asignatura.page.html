@@ -1,0 +1,22 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mis Asignaturas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ng-container *ngFor="let asignatura of asignaturas">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ asignatura.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        {{ asignatura.code }}
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+</ion-content>
