@@ -1,5 +1,7 @@
 # IonicQrCodeLector
 
+actualmente estoy usando mi dominio en algunas partes las que deberán ser cambiadas por la ip de la maquina en la que se ejecute el servidor json
+
 ## Instalación de dependencias
 
 ```sh
