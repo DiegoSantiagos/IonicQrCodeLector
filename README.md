@@ -64,7 +64,9 @@ npm install @capacitor/android
 npx cap add android
 ```
 
-- sincronizar
+- sincronizar 
+  
+usar para sincronizar los cambios realizados en el proyecto
 
 ```sh
 npx cap sync
