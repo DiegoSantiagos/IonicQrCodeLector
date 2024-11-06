@@ -21,10 +21,17 @@
     <ion-card-content>
       <ion-item>
         <ion-label position="floating">Código de Asistencia</ion-label>
-        <ion-input type="text" [(ngModel)]="valor" readonly></ion-input>
+        <ion-input type="text" [(ngModel)]="valorQr" readonly></ion-input>
       </ion-item>
-      <qrcode [qrdata]="valor" [width]="350"></qrcode>
+      <qrcode [qrdata]="valorQr" [width]="350"></qrcode>
     </ion-card-content>
+    <ion-row>
+      <ion-col size="12">
+        <ion-button (click)="generateQRCode()" class="submit" expand="block">
+          Generar
+        </ion-button>
+      </ion-col>
+    </ion-row>
   </ion-card>
 
   <ion-card *ngIf="mode === 'scan'">

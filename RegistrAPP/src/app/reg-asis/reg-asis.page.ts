@@ -15,7 +15,7 @@ import { AsistenciaService } from '../services/asistencia.service';
 export class RegAsisPage implements OnInit {
   infoAlumno: string = '';
   scanResult: string = '';
-  valor: string = '';
+  valorQr: string = '';
   mode: 'scan' | 'generate' = 'generate';
   userRole: string = '';
   currentUser: any;
@@ -36,7 +36,6 @@ export class RegAsisPage implements OnInit {
       return;
     }
     this.userRole = this.currentUser.role;
-
     if (this.userRole === 'profesor') {
       this.mode = 'generate';
       this.loadAssignments();
@@ -61,14 +60,41 @@ export class RegAsisPage implements OnInit {
 
   generateQRCode() {
     const currentDate = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
-    const assignment = this.assignments.find(a => a.professorId === this.currentUser.id);
-    if (assignment) {
-      this.http.get<any[]>(`https://totem-tunel.uri1000.win/classes?id=${assignment.classId}`).subscribe(classes => {
-        if (classes.length > 0) {
-          const classCode = classes[0].code;
-          this.valor = `${this.currentUser.id}-${assignment.classId}-${currentDate}`;
-        }
-      });
+    const currentHour = new Date().getHours(); // Obtener la hora actual (sin los minutos)
+
+    console.log('Current User:', this.currentUser);
+    console.log('Assignments:', this.assignments);
+
+    if (this.assignments && this.assignments.length > 0 && this.currentUser && this.currentUser.id) {
+      const assignment = this.assignments.find(a => a.professorId.toString() === this.currentUser.id);
+      if (assignment) {
+        this.http.get<any[]>(`https://totem-tunel.uri1000.win/classes?id=${assignment.classId}`).subscribe(
+          classes => {
+            if (classes.length > 0) {
+              if (this.currentUser.id && assignment.classId && currentDate && currentHour) {
+                this.valorQr = `${this.currentUser.id}-${assignment.classId}-${currentDate}-${currentHour}`;
+                console.log('QR Code generated:', this.valorQr);
+              } else {
+                console.error('Uno de los valores está vacío:', {
+                  userId: this.currentUser.id,
+                  classId: assignment.classId,
+                  currentDate,
+                  currentHour
+                });
+              }
+            } else {
+              console.error('No se encontraron clases para el assignment:', assignment.classId);
+            }
+          },
+          error => {
+            console.error('Error al obtener las clases:', error);
+          }
+        );
+      } else {
+        console.error('No se encontró un assignment para el usuario actual.');
+      }
+    } else {
+      console.error('Asignaciones o usuario actual no están definidos correctamente.');
     }
   }
 
@@ -93,11 +119,12 @@ export class RegAsisPage implements OnInit {
   }
 
   registrarAsistencia(scanResult: string) {
-    const [professorId, classId, date] = scanResult.split('-');
+    const [professorId, classId, date, hour] = scanResult.split('-');
     const asistencia = {
       alumno: this.currentUser.name,
       classId: parseInt(classId, 10),
       date,
+      hour,
       asistencia: 'presente'
     };
 
