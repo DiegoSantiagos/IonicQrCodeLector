@@ -103,10 +103,15 @@ npm install angularx-qrcode --save
 ```sh
 npm install -g json-server
 ```
+  
+```sh
+md jsonServer
+cd jsonServer
+New-Item db.json
+# touch db.json # en linux o mac
+```
 
-### crear carpeta jsonserver
-
-#### Crear archivo db.json
+Ejemplo de db.json
 
 ```json
 {
