@@ -66,7 +66,7 @@ npx cap add android
 
 - sincronizar 
   
-usar para sincronizar los cambios realizados en el proyecto
+usar para sincronizar los cambios realizados en el proyecto, de preferencia usar con el projecto apagado
 
 ```sh
 npx cap sync

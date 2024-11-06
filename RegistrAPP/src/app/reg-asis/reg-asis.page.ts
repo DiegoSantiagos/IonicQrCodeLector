@@ -149,5 +149,10 @@ export class RegAsisPage implements OnInit {
     });
     toast.present();
   }
+
+  confirmarAsistencia() {
+    this.registrarAsistencia(this.scanResult);
+  }
+
 }
 

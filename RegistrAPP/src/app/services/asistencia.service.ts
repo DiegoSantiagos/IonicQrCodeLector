@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class AsistenciaService {
-    private apiUrl = 'http:totem-tunel.uri1000.win/asistencias';
+    private apiUrl = 'http://totem-tunel.uri1000.win/asistencias';
 
     constructor(private http: HttpClient) { }
 
