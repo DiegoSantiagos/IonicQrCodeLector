@@ -121,45 +121,16 @@ export class RegAsisPage implements OnInit {
 
   async registrarAsistencia(qrCode: string) {
     if (qrCode) {
-      const [userId, classId, date, hour] = qrCode.split(',');
-      const asistenciaData = {
-        id: this.generateUniqueId(),
-        classId: parseInt(classId, 10),
-        studentId: parseInt(userId, 10),
-        date: date,
-        asistencia: 'presente',
-        horaInicio: hour
-      };
-
-      console.log('Datos de asistencia a enviar:', asistenciaData);
-
-      // Formatear asistenciaData en una cadena legible
-      const formattedAsistenciaData = `
-        ID del Estu:
-        ${asistenciaData.studentId}
-        ID de la Clase:
-        ${asistenciaData.classId}
-        Fecha:
-        ${asistenciaData.date}
-        Hora de Inicio:
-        ${asistenciaData.horaInicio}
-        Asistencia:
-        ${asistenciaData.asistencia}
-        ID:
-        ${asistenciaData.id}
-      `;
-
-      // Asignar la cadena formateada a scanResult
-      this.mostrar = formattedAsistenciaData;
-
-      this.showToast('Enviando datos de asistencia al servidor...', 'success');
-      this.asistenciaService.registrarAsistencia(asistenciaData).subscribe(
+      console.log('Enviando datos de asistencia al servidor...');
+      this.asistenciaService.prepararYRegistrarAsistencia(qrCode).subscribe(
         response => {
           console.log('Respuesta del servidor:', response);
           this.showToast('Asistencia registrada exitosamente', 'success');
         },
         async error => {
           let errorMessage = 'Error al registrar la asistencia';
+          console.error('Error al registrar la asistencia:', error);
+
           if (error.status === 0) {
             errorMessage = 'No se pudo conectar con el servidor. Por favor, verifica tu conexión a internet o la URL del servidor.';
           } else if (error.status === 401) {
@@ -173,50 +144,13 @@ export class RegAsisPage implements OnInit {
           } else if (error.error?.message) {
             errorMessage = error.error.message;
           }
+
           this.showToast(errorMessage, 'danger');
         }
       );
     } else {
+      console.warn('Código QR inválido');
       this.showToast('Código QR inválido', 'warning');
-    }
-  }
-
-
-
-  generateUniqueId() {
-    const lastId = localStorage.getItem('lastUniqueId') || '0';
-    const newId = (parseInt(lastId, 10) + 1).toString();
-    localStorage.setItem('lastUniqueId', newId);
-    return newId;
-  }
-
-
-  marcarAusentes() {
-    const currentDate = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
-    const assignment = this.assignments.find(a => a.professorId === this.currentUser.id);
-    if (assignment) {
-      this.http.get<any[]>(`https://totem-tunel.uri1000.win/enrollments?classId=${assignment.classId}`).subscribe(enrollments => {
-        enrollments.forEach(enrollment => {
-          this.http.get<any[]>(`https://totem-tunel.uri1000.win/asistencias?classId=${assignment.classId}&studentId=${enrollment.studentId}&date=${currentDate}`).subscribe(asistencias => {
-            if (asistencias.length === 0) {
-              const asistencia = {
-                alumno: enrollment.studentId,
-                classId: assignment.classId,
-                date: currentDate,
-                asistencia: 'ausente'
-              };
-              this.asistenciaService.registrarAsistencia(asistencia).subscribe(
-                response => {
-                  console.log('Asistencia ausente registrada:', response);
-                },
-                error => {
-                  console.error('Error al registrar asistencia ausente:', error);
-                }
-              );
-            }
-          });
-        });
-      });
     }
   }
 
@@ -234,6 +168,7 @@ export class RegAsisPage implements OnInit {
     this.registrarAsistencia(this.scanResult);
   }
 
+
   enviarDatosDePrueba() {
     this.asistenciaService.enviarDatosDePrueba().subscribe(
       response => {
@@ -246,6 +181,5 @@ export class RegAsisPage implements OnInit {
       }
     );
   }
-
 }
 

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
     providedIn: 'root'
 })
 export class AsistenciaService {
-    private apiUrl = 'http://totem-tunel.uri1000.win';
+    private apiUrl = 'https://totem-tunel.uri1000.win';
 
     constructor(private http: HttpClient) { }
 
@@ -15,7 +15,7 @@ export class AsistenciaService {
     }
 
     obtenerAsistencias(): Observable<any[]> {
-        return this.http.get<any[]>(this.apiUrl);
+        return this.http.get<any[]>(`${this.apiUrl}/asistencias`);
     }
 
     enviarDatosDePrueba(): Observable<any> {
@@ -28,5 +28,25 @@ export class AsistenciaService {
             horaInicio: '08:00'
         };
         return this.http.post(`${this.apiUrl}/asistencias`, datosDePrueba);
+    }
+
+    prepararYRegistrarAsistencia(qrCode: string): Observable<any> {
+        const [userId, classId, date, hour] = qrCode.split(',');
+        const asistenciaData = {
+            id: this.generateUniqueId(),
+            classId: parseInt(classId, 10),
+            studentId: parseInt(userId, 10),
+            date: date,
+            asistencia: 'presente',
+            horaInicio: hour
+        };
+        return this.registrarAsistencia(asistenciaData);
+    }
+
+    private generateUniqueId(): string {
+        const lastId = localStorage.getItem('lastUniqueId') || '0';
+        const newId = (parseInt(lastId, 10) + 1).toString();
+        localStorage.setItem('lastUniqueId', newId);
+        return newId;
     }
 }
