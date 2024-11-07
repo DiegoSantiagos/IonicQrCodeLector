@@ -20,6 +20,7 @@ export class RegAsisPage implements OnInit {
   userRole: string = '';
   currentUser: any;
   assignments: any[] = [];
+  mostrar: any;
 
   constructor(private modalController: ModalController,
     private plataform: Platform,
@@ -121,22 +122,58 @@ export class RegAsisPage implements OnInit {
   async registrarAsistencia(qrCode: string) {
     if (qrCode) {
       const [userId, classId, date, hour] = qrCode.split(',');
-
       const asistenciaData = {
+        id: this.generateUniqueId(),
         classId: parseInt(classId, 10),
         studentId: parseInt(userId, 10),
         date: date,
         asistencia: 'presente',
-        horaInicio: hour,
-        id: this.generateUniqueId()
+        horaInicio: hour
       };
 
-      this.http.post('http://totem-tunel.uri1000.win/asistencias', asistenciaData).subscribe(
+      console.log('Datos de asistencia a enviar:', asistenciaData);
+
+      // Formatear asistenciaData en una cadena legible
+      const formattedAsistenciaData = `
+        ID del Estu:
+        ${asistenciaData.studentId}
+        ID de la Clase:
+        ${asistenciaData.classId}
+        Fecha:
+        ${asistenciaData.date}
+        Hora de Inicio:
+        ${asistenciaData.horaInicio}
+        Asistencia:
+        ${asistenciaData.asistencia}
+        ID:
+        ${asistenciaData.id}
+      `;
+
+      // Asignar la cadena formateada a scanResult
+      this.mostrar = formattedAsistenciaData;
+
+      this.showToast('Enviando datos de asistencia al servidor...', 'success');
+      this.asistenciaService.registrarAsistencia(asistenciaData).subscribe(
         response => {
+          console.log('Respuesta del servidor:', response);
           this.showToast('Asistencia registrada exitosamente', 'success');
         },
         async error => {
-          this.showToast('Error al registrar la asistencia: ' + error.message, 'danger');
+          let errorMessage = 'Error al registrar la asistencia';
+          if (error.status === 0) {
+            errorMessage = 'No se pudo conectar con el servidor. Por favor, verifica tu conexión a internet o la URL del servidor.';
+          } else if (error.status === 401) {
+            errorMessage = 'No autorizado. Por favor, verifica tus credenciales.';
+          } else if (error.status === 403) {
+            errorMessage = 'Prohibido. No tienes permiso para realizar esta acción.';
+          } else if (error.status === 404) {
+            errorMessage = 'Recurso no encontrado. Por favor, verifica la URL.';
+          } else if (error.status === 500) {
+            errorMessage = 'Error interno del servidor. Por favor, intenta nuevamente más tarde.';
+          } else if (error.error?.message) {
+            errorMessage = error.error.message;
+          }
+          this.showToast(errorMessage, 'danger');
         }
       );
     } else {
@@ -144,8 +181,13 @@ export class RegAsisPage implements OnInit {
     }
   }
 
+
+
   generateUniqueId() {
-    return Math.random().toString(36).substr(2, 9);
+    const lastId = localStorage.getItem('lastUniqueId') || '0';
+    const newId = (parseInt(lastId, 10) + 1).toString();
+    localStorage.setItem('lastUniqueId', newId);
+    return newId;
   }
 
 
@@ -190,6 +232,19 @@ export class RegAsisPage implements OnInit {
 
   confirmarAsistencia() {
     this.registrarAsistencia(this.scanResult);
+  }
+
+  enviarDatosDePrueba() {
+    this.asistenciaService.enviarDatosDePrueba().subscribe(
+      response => {
+        console.log('Respuesta del servidor:', response);
+        this.showToast('Datos de prueba enviados exitosamente', 'success');
+      },
+      error => {
+        console.error('Error al enviar datos de prueba:', error);
+        this.showToast('Error al enviar datos de prueba', 'danger');
+      }
+    );
   }
 
 }

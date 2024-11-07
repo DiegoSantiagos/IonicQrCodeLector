@@ -1,0 +1,12 @@
+  {
+    "name": "jsonServer",
+    "version": "1.0.0",
+    "description": "JSON Server for RegistrAPP",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "json-server": "^1.0.0-beta.3"
+    }
+  }

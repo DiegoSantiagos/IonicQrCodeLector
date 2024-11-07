@@ -11,8 +11,17 @@ server.use((req, res, next) => {
     next();
 });
 
+server.use(jsonServer.bodyParser);
+
+server.post('/asistencias', (req, res) => {
+    const asistencia = req.body;
+    asistencia.id = Date.now().toString();
+    router.db.get('asistencias').push(asistencia).write();
+    res.status(201).json(asistencia);
+});
+
 server.use(middlewares);
 server.use(router);
-server.listen(3000, () => {
-    console.log('JSON Server is running on port 3000');
+server.listen(8000, () => {
+    console.log('JSON Server is running on port 8000');
 });

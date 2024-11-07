@@ -1,0 +1,105 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "juan",
+      "role": "alumno",
+      "clave": "12345"
+    },
+    {
+      "id": "2",
+      "name": "willy",
+      "role": "alumno",
+      "clave": "12345"
+    },
+    {
+      "id": "3",
+      "name": "Pedro",
+      "role": "profesor",
+      "clave": "12345"
+    },
+    {
+      "id": "4",
+      "name": "diego",
+      "role": "profesor",
+      "clave": "12345"
+    }
+  ],
+  "classes": [
+    {
+      "id": "1",
+      "name": "matematicas",
+      "code": "mta123"
+    },
+    {
+      "id": "2",
+      "name": "lenguaje",
+      "code": "lng456"
+    }
+  ],
+  "assignments": [
+    {
+      "classId": 1,
+      "professorId": 3,
+      "id": "4a8e"
+    },
+    {
+      "classId": 2,
+      "professorId": 4,
+      "id": "f5cc"
+    }
+  ],
+  "enrollments": [
+    {
+      "classId": 1,
+      "studentId": 1,
+      "id": "cfef"
+    },
+    {
+      "classId": 1,
+      "studentId": 2,
+      "id": "9181"
+    },
+    {
+      "classId": 2,
+      "studentId": 1,
+      "id": "d678"
+    },
+    {
+      "classId": 2,
+      "studentId": 2,
+      "id": "362d"
+    }
+  ],
+  "asistencias": [
+    {
+      "classId": 1,
+      "studentId": 1,
+      "date": "2021-09-01",
+      "asistencia": "ausente",
+      "id": "1"
+    },
+    {
+      "classId": 0,
+      "studentId": 1,
+      "date": "2021-09-01",
+      "asistencia": "ausente",
+      "id": "0"
+    },
+    {
+      "id": 0,
+      "classId": 0,
+      "studentId": 1,
+      "date": "2021-09-01",
+      "asistencia": "ausente"
+    },
+    {
+      "id": "test-id",
+      "classId": 1,
+      "studentId": 1,
+      "date": "2023-01-01",
+      "asistencia": "presente",
+      "horaInicio": "08:00"
+    }
+  ]
+}

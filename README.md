@@ -64,8 +64,8 @@ npm install @capacitor/android
 npx cap add android
 ```
 
-- sincronizar 
-  
+- sincronizar
+
 usar para sincronizar los cambios realizados en el proyecto, de preferencia usar con el projecto apagado
 
 ```sh
@@ -133,20 +133,18 @@ Ejemplo de db.json
     }
   ]
 }
-```
+```s
 
 ```sh
-json-server bd.json
+json-server db.json
 
-json-server bd.json --host 0.0.0.0 --port 8000
+json-server db.json --host 0.0.0.0 --port 8000
 
 ```
 
 ## Geolocalización
 
-
 (Opcional)
-
 
 ```sh
 npm install @ionic-native/geolocation
