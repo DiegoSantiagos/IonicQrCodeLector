@@ -124,6 +124,38 @@
       "date": "2023-01-01",
       "asistencia": "presente",
       "horaInicio": "08:00"
+    },
+    {
+      "id": "test-id",
+      "classId": 1,
+      "studentId": 1,
+      "date": "2023-01-01",
+      "asistencia": "presente",
+      "horaInicio": "08:00"
+    },
+    {
+      "id": "test-id",
+      "classId": 1,
+      "studentId": 1,
+      "date": "2023-01-01",
+      "asistencia": "presente",
+      "horaInicio": "08:00"
+    },
+    {
+      "id": "16",
+      "classId": 2,
+      "studentId": 4,
+      "date": "2024-11-07",
+      "asistencia": "presente",
+      "horaInicio": "19"
+    },
+    {
+      "id": "17",
+      "classId": 2,
+      "studentId": 4,
+      "date": "2024-11-07",
+      "asistencia": "presente",
+      "horaInicio": "20"
     }
   ]
 }
