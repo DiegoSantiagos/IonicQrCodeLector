@@ -21,6 +21,7 @@ export class HomePage implements OnInit {
     this.currentUser = this.authService.getCurrentUser();
     if (!this.currentUser || !this.currentUser.id) {
       console.error('Usuario no autenticado o sin ID');
+      this.router.navigate(['/login']);
       return;
     }
     this.userRole = this.currentUser.role;

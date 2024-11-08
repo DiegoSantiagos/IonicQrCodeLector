@@ -6,6 +6,7 @@ import { LensFacing, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { AuthService } from '../services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { AsistenciaService } from '../services/asistencia.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reg-asis',
@@ -27,13 +28,15 @@ export class RegAsisPage implements OnInit {
     private authService: AuthService,
     private http: HttpClient,
     private asistenciaService: AsistenciaService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     if (!this.currentUser || !this.currentUser.id) {
       console.error('Usuario no autenticado o sin ID');
+      this.router.navigate(['/login']);
       return;
     }
     this.userRole = this.currentUser.role;

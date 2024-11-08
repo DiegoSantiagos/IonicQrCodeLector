@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AsistenciaService } from '../services/asistencia.service';
 import { AuthService } from '../services/auth.service';
 import { AsignaturaService } from '../services/asignatura.service';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-mis-asis',
   templateUrl: './mis-asis.page.html',
@@ -16,11 +16,17 @@ export class MisAsisPage implements OnInit {
   constructor(
     private asistenciaService: AsistenciaService,
     private authService: AuthService,
-    private asignaturaService: AsignaturaService
+    private asignaturaService: AsignaturaService,
+    private router: Router
   ) { }
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
+    if (!this.currentUser || !this.currentUser.id) {
+      console.error('Usuario no autenticado o sin ID');
+      this.router.navigate(['/login']);
+      return;
+    }
     this.obtenerAsignaturasYAsistencias();
   }
 

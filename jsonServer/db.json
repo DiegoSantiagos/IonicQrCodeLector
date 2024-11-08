@@ -87,6 +87,22 @@
       "date": "2024-11-07",
       "asistencia": "presente",
       "horaInicio": "20"
+    },
+    {
+      "id": "18",
+      "classId": 2,
+      "studentId": 4,
+      "date": "2024-11-08",
+      "asistencia": "presente",
+      "horaInicio": "23"
+    },
+    {
+      "id": "19",
+      "classId": 2,
+      "studentId": 4,
+      "date": "2024-11-08",
+      "asistencia": "presente",
+      "horaInicio": "12"
     }
   ]
 }

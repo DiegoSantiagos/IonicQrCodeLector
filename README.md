@@ -1,5 +1,7 @@
 # IonicQrCodeLector
 
+El codigo debe de separar las secciones del profe y si inicia el qr de una seccion no debe de poder quedar presente el alumno de otra seccion
+
 actualmente estoy usando mi dominio en algunas partes las que deberán ser cambiadas por la ip de la maquina en la que se ejecute el servidor json
 
 ## Índice
@@ -69,6 +71,23 @@ npm install @ionic/storage
   
 ```sh
 npm install @capacitor/android
+```
+
+- build
+  
+```sh
+ionic build
+```
+
+```xml
+ <!-- Permissions -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 ```
 
 - agregar android
@@ -148,7 +167,6 @@ Ejemplo de db.json
     }
   ]
 }
-```s
 
 ```sh
 json-server db.json
