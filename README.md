@@ -167,6 +167,7 @@ Ejemplo de db.json
     }
   ]
 }
+```
 
 ```sh
 json-server db.json
