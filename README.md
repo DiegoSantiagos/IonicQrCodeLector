@@ -2,6 +2,17 @@
 
 actualmente estoy usando mi dominio en algunas partes las que deberán ser cambiadas por la ip de la maquina en la que se ejecute el servidor json
 
+## Índice
+
+- [IonicQrCodeLector](#ionicqrcodelector)
+  - [Índice](#índice)
+  - [Instalación de dependencias](#instalación-de-dependencias)
+  - [Iniciar el proyecto](#iniciar-el-proyecto)
+  - [Android](#android)
+  - [QrCode](#qrcode)
+  - [Jsonserver](#jsonserver)
+  - [Geolocalización](#geolocalización)
+
 ## Instalación de dependencias
 
 ```sh
@@ -51,6 +62,8 @@ npm install @ionic/storage
 ```
 
 ## Android
+
+[Instalar Android Studio](https://developer.android.com/studio?hl=es-419)
 
 - instalar android
   
