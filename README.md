@@ -116,7 +116,8 @@ npx cap open android
 
 - Scanner
   
-para poder usar el scaner debe de poner el archivo barcode-scanning.js en la carpeta de la app que lo requiera e importarlo en el archivo que se vaya a usar
+para poder usar el scaner debe de poner el archivo <a name="BarcodeScanningModalComponent">BarcodeScanningModalComponent </a>
+ en la carpeta de la app que lo requiera e importarlo en el archivo que se vaya a usar
 
 ```sh
 npm install @capacitor-mlkit/barcode-scanning
@@ -171,8 +172,21 @@ Ejemplo de db.json
 
 ```sh
 json-server db.json
+```
 
-json-server db.json --host 0.0.0.0 --port 8000
+>[!TIP]
+>Puedes ejecutar el servidor JSON en una dirección IP específica y un puerto diferente usando el siguiente comando
+
+```sh
+json-server db.json --host 0.0.0.0 --port 3000
+
+```
+
+- Servicio
+
+```sh
+ng generate service services/nombreServicio
+
 
 ```
 
