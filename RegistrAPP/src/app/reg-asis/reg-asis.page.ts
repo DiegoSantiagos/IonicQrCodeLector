@@ -20,7 +20,10 @@ export class RegAsisPage implements OnInit {
   mode: 'scan' | 'generate' = 'generate';
   userRole: string = '';
   currentUser: any;
+  selectedClassId: number | null = null;
+  selectedSectionId: number | null = null;
   assignments: any[] = [];
+  sections: any[] = [];
   mostrar: any;
 
   constructor(private modalController: ModalController,
@@ -43,6 +46,7 @@ export class RegAsisPage implements OnInit {
     if (this.userRole === 'profesor') {
       this.mode = 'generate';
       this.loadAssignments();
+      this.loadSections();
     } else if (this.userRole === 'alumno') {
       this.mode = 'scan';
     }
@@ -55,50 +59,108 @@ export class RegAsisPage implements OnInit {
   }
 
   loadAssignments() {
+    if (!this.currentUser || !this.currentUser.id) {
+      console.error('Usuario no autenticado o sin ID');
+      return;
+    }
+
     this.http.get<any[]>('https://totem-tunel.uri1000.win/assignments').subscribe(assignments => {
-      this.assignments = assignments;
-      this.generateQRCode();
+      console.log('Todas las asignaciones:', assignments);
+      const professorAssignments = assignments.filter(a => a.professorId.toString() === this.currentUser.id);
+      console.log('Asignaciones del profesor:', professorAssignments);
+      const classIds = professorAssignments.map(a => a.classId);
+
+      this.http.get<any[]>('https://totem-tunel.uri1000.win/classes').subscribe(classes => {
+        console.log('Todas las clases:', classes);
+        const uniqueAssignments: any[] = [];
+        const seenClassNames = new Set();
+
+        professorAssignments.forEach(assignment => {
+          const classInfo = classes.find(cls => cls.id === assignment.classId);
+          console.log(`Clase encontrada para classId ${assignment.classId}:`, classInfo);
+          const className = classInfo ? classInfo.name : 'Desconocido';
+
+          if (!seenClassNames.has(className)) {
+            seenClassNames.add(className);
+            uniqueAssignments.push({
+              ...assignment,
+              className: className
+            });
+          }
+        });
+
+        this.assignments = uniqueAssignments;
+        console.log('Asignaciones únicas con nombres de materias:', this.assignments);
+      });
     });
   }
 
+  loadSections() {
+    if (!this.currentUser || !this.currentUser.id) {
+      console.error('Usuario no autenticado o sin ID');
+      return;
+    }
+
+    this.http.get<any[]>('https://totem-tunel.uri1000.win/assignments').subscribe(assignments => {
+      const professorAssignments = assignments.filter(a => a.professorId.toString() === this.currentUser.id);
+      const sectionIds = professorAssignments.map(a => a.seccionid);
+
+      this.http.get<any[]>('https://totem-tunel.uri1000.win/sections').subscribe(sections => {
+        this.sections = sections.filter(section => sectionIds.includes(section.id));
+        console.log('Secciones filtradas:', this.sections);
+      });
+    });
+  }
+
+  // generateQRCode() {
+  //   const currentDate = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
+  //   const currentHour = new Date().getHours(); // Obtener la hora actual (sin los minutos)
+
+  //   console.log('Current User:', this.currentUser);
+  //   console.log('Assignments:', this.assignments);
+
+  //   if (this.assignments && this.assignments.length > 0 && this.currentUser && this.currentUser.id) {
+  //     const assignment = this.assignments.find(a => a.professorId.toString() === this.currentUser.id);
+  //     if (assignment) {
+  //       this.http.get<any[]>(`https://totem-tunel.uri1000.win/classes?id=${assignment.classId}`).subscribe(
+  //         classes => {
+  //           if (classes.length > 0) {
+  //             if (this.currentUser.id && assignment.classId && currentDate && currentHour) {
+  //               this.valorQr = `${this.currentUser.id},${assignment.classId},${currentDate},${currentHour}`;
+  //               console.log('QR Code generated:', this.valorQr, 'y los datos son los siguientes', this.currentUser.id, assignment.classId, currentDate, currentHour);
+  //             } else {
+  //               console.error('Uno de los valores está vacío:', {
+  //                 userId: this.currentUser.id,
+  //                 classId: assignment.classId,
+  //                 currentDate,
+  //                 currentHour
+  //               });
+  //             }
+  //           } else {
+  //             console.error('No se encontraron clases para el assignment:', assignment.classId);
+  //           }
+  //         },
+  //         error => {
+  //           console.error('Error al obtener las clases:', error);
+  //         }
+  //       );
+  //     } else {
+  //       console.error('No se encontró un assignment para el usuario actual.');
+  //     }
+  //   } else {
+  //     console.error('Asignaciones o usuario actual no están definidos correctamente.');
+  //   }
+  // }
 
   generateQRCode() {
-    const currentDate = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
-    const currentHour = new Date().getHours(); // Obtener la hora actual (sin los minutos)
+    const currentDate = new Date().toISOString().split('T')[0];
+    const currentHour = new Date().getHours();
 
-    console.log('Current User:', this.currentUser);
-    console.log('Assignments:', this.assignments);
-
-    if (this.assignments && this.assignments.length > 0 && this.currentUser && this.currentUser.id) {
-      const assignment = this.assignments.find(a => a.professorId.toString() === this.currentUser.id);
-      if (assignment) {
-        this.http.get<any[]>(`https://totem-tunel.uri1000.win/classes?id=${assignment.classId}`).subscribe(
-          classes => {
-            if (classes.length > 0) {
-              if (this.currentUser.id && assignment.classId && currentDate && currentHour) {
-                this.valorQr = `${this.currentUser.id},${assignment.classId},${currentDate},${currentHour}`;
-                console.log('QR Code generated:', this.valorQr, 'y los datos son los siguientes', this.currentUser.id, assignment.classId, currentDate, currentHour);
-              } else {
-                console.error('Uno de los valores está vacío:', {
-                  userId: this.currentUser.id,
-                  classId: assignment.classId,
-                  currentDate,
-                  currentHour
-                });
-              }
-            } else {
-              console.error('No se encontraron clases para el assignment:', assignment.classId);
-            }
-          },
-          error => {
-            console.error('Error al obtener las clases:', error);
-          }
-        );
-      } else {
-        console.error('No se encontró un assignment para el usuario actual.');
-      }
+    if (this.selectedClassId && this.selectedSectionId && this.currentUser && this.currentUser.id) {
+      this.valorQr = `${this.currentUser.id},${this.selectedClassId},${currentDate},${currentHour},${this.selectedSectionId}`;
+      console.log('QR Code generated:', this.valorQr);
     } else {
-      console.error('Asignaciones o usuario actual no están definidos correctamente.');
+      console.error('Debe seleccionar una materia y una sección.');
     }
   }
 

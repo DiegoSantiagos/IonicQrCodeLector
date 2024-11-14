@@ -20,6 +20,22 @@
     </ion-card-header>
     <ion-card-content>
       <ion-item>
+        <ion-label>Materia</ion-label>
+        <ion-select [(ngModel)]="selectedClassId">
+          <ion-select-option *ngFor="let assignment of assignments" [value]="assignment.classId">
+            {{ assignment.className }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item *ngIf="selectedClassId">
+        <ion-label>Sección</ion-label>
+        <ion-select [(ngModel)]="selectedSectionId">
+          <ion-select-option *ngFor="let section of sections" [value]="section.id">
+            {{ section.code }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
         <ion-label position="floating">Código de Asistencia</ion-label>
         <ion-input type="text" [(ngModel)]="valorQr" readonly></ion-input>
       </ion-item>
@@ -33,7 +49,6 @@
       </ion-col>
     </ion-row>
   </ion-card>
-
   <ion-card *ngIf="mode === 'scan'">
     <ion-card-header>
       <ion-card-title>Escanear Código QR</ion-card-title>
