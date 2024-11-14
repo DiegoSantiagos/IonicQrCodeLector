@@ -25,6 +25,7 @@ export class RegAsisPage implements OnInit {
   assignments: any[] = [];
   sections: any[] = [];
   mostrar: any;
+  enrollments: any[] = [];
 
   constructor(private modalController: ModalController,
     private plataform: Platform,
@@ -49,6 +50,8 @@ export class RegAsisPage implements OnInit {
       this.loadSections();
     } else if (this.userRole === 'alumno') {
       this.mode = 'scan';
+      this.loadSectionsAlumnos();
+      this.loadEnrollments();
     }
 
     if (this.plataform.is('capacitor')) {
@@ -57,7 +60,6 @@ export class RegAsisPage implements OnInit {
       BarcodeScanner.removeAllListeners();
     }
   }
-
   loadAssignments() {
     if (!this.currentUser || !this.currentUser.id) {
       console.error('Usuario no autenticado o sin ID');
@@ -71,13 +73,11 @@ export class RegAsisPage implements OnInit {
       const classIds = professorAssignments.map(a => a.classId);
 
       this.http.get<any[]>('https://totem-tunel.uri1000.win/classes').subscribe(classes => {
-        console.log('Todas las clases:', classes);
         const uniqueAssignments: any[] = [];
         const seenClassNames = new Set();
 
         professorAssignments.forEach(assignment => {
           const classInfo = classes.find(cls => cls.id === assignment.classId);
-          console.log(`Clase encontrada para classId ${assignment.classId}:`, classInfo);
           const className = classInfo ? classInfo.name : 'Desconocido';
 
           if (!seenClassNames.has(className)) {
@@ -108,6 +108,29 @@ export class RegAsisPage implements OnInit {
       this.http.get<any[]>('https://totem-tunel.uri1000.win/sections').subscribe(sections => {
         this.sections = sections.filter(section => sectionIds.includes(section.id));
         console.log('Secciones filtradas:', this.sections);
+      });
+    });
+  }
+
+  loadSectionsAlumnos() {
+    if (!this.currentUser || !this.currentUser.id) {
+      console.error('Usuario no autenticado o sin ID');
+      return;
+    }
+
+    this.http.get<any[]>('https://totem-tunel.uri1000.win/enrollments').subscribe(enrollments => {
+      const studentEnrollments = enrollments.filter(e => e.studentId.toString() === this.currentUser.id);
+      const assignmentIds = studentEnrollments.map(e => e.assignmentId);
+      console.log('Asignaturas inscritas por el alumno:', assignmentIds);
+
+      this.http.get<any[]>('https://totem-tunel.uri1000.win/assignments').subscribe(assignments => {
+        const studentAssignments = assignments.filter(assignment => assignmentIds.includes(assignment.id));
+        const classIds = studentAssignments.map(a => a.classId);
+
+        this.http.get<any[]>('https://totem-tunel.uri1000.win/classes').subscribe(classes => {
+          this.assignments = classes.filter(cls => classIds.includes(cls.id));
+          console.log('Asignaturas filtradas para el alumno:', this.assignments);
+        });
       });
     });
   }
@@ -165,6 +188,14 @@ export class RegAsisPage implements OnInit {
     }
   }
 
+  loadEnrollments() {
+
+    this.http.get<any[]>('https://totem-tunel.uri1000.win/enrollments').subscribe(enrollments => {
+      this.enrollments = enrollments.filter(enrollment => enrollment.studentId.toString() === this.currentUser.id);
+      console.log('Inscripciones:', this.enrollments);
+    });
+  }
+
   async startScan() {
     const modal = await this.modalController.create({
       component: BarcodeScanningModalComponent,
@@ -186,38 +217,59 @@ export class RegAsisPage implements OnInit {
   }
 
   async registrarAsistencia(qrCode: string) {
-    if (qrCode) {
-      console.log('Enviando datos de asistencia al servidor...');
-      this.asistenciaService.prepararYRegistrarAsistencia(qrCode).subscribe(
-        response => {
-          console.log('Respuesta del servidor:', response);
-          this.showToast('Asistencia registrada exitosamente', 'success');
-        },
-        async error => {
-          let errorMessage = 'Error al registrar la asistencia';
-          console.error('Error al registrar la asistencia:', error);
-
-          if (error.status === 0) {
-            errorMessage = 'No se pudo conectar con el servidor. Por favor, verifica tu conexión a internet o la URL del servidor.';
-          } else if (error.status === 401) {
-            errorMessage = 'No autorizado. Por favor, verifica tus credenciales.';
-          } else if (error.status === 403) {
-            errorMessage = 'Prohibido. No tienes permiso para realizar esta acción.';
-          } else if (error.status === 404) {
-            errorMessage = 'Recurso no encontrado. Por favor, verifica la URL.';
-          } else if (error.status === 500) {
-            errorMessage = 'Error interno del servidor. Por favor, intenta nuevamente más tarde.';
-          } else if (error.error?.message) {
-            errorMessage = error.error.message;
-          }
-
-          this.showToast(errorMessage, 'danger');
-        }
-      );
-    } else {
-      console.warn('Código QR inválido');
-      this.showToast('Código QR inválido', 'warning');
+    if (!qrCode) {
+      this.showToast('Código QR no proporcionado.', 'warning');
+      return;
     }
+
+    const [userId, classId, date, hour, sectionId] = qrCode.split(',');
+
+    if (!this.currentUser || !this.currentUser.id) {
+      this.showToast('Usuario no autenticado o sin ID', 'danger');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // Verificar si el alumno está inscrito en la clase y sección correspondientes
+    const studentId = this.currentUser.id;
+    const studentEnrollment = this.enrollments.find(enrollment =>
+      enrollment.studentId.toString() === studentId &&
+      enrollment.classId.toString() === classId &&
+      enrollment.sectionId.toString() === sectionId
+    );
+
+    if (!studentEnrollment) {
+      this.showToast('El alumno no está inscrito en esta clase o sección.', 'danger');
+      return;
+    }
+
+    console.log('Enviando datos de asistencia al servidor...');
+    this.asistenciaService.prepararYRegistrarAsistencia(qrCode).subscribe(
+      response => {
+        this.showToast('Asistencia registrada con éxito.', 'success');
+        console.log('Asistencia registrada:', response);
+      },
+      error => {
+        let errorMessage = 'Error al registrar la asistencia';
+        console.error('Error al registrar la asistencia:', error);
+
+        if (error.status === 0) {
+          errorMessage = 'No se pudo conectar con el servidor. Por favor, verifica tu conexión a internet o la URL del servidor.';
+        } else if (error.status === 401) {
+          errorMessage = 'No autorizado. Por favor, verifica tus credenciales.';
+        } else if (error.status === 403) {
+          errorMessage = 'Prohibido. No tienes permiso para realizar esta acción.';
+        } else if (error.status === 404) {
+          errorMessage = 'Recurso no encontrado. Por favor, verifica la URL.';
+        } else if (error.status === 500) {
+          errorMessage = 'Error interno del servidor. Por favor, intenta nuevamente más tarde.';
+        } else if (error.error?.message) {
+          errorMessage = error.error.message;
+        }
+
+        this.showToast(errorMessage, 'danger');
+      }
+    );
   }
 
   async showToast(message: string, color: string) {

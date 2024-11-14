@@ -41,26 +41,48 @@
     {
       "classId": 1,
       "professorId": 3,
-      "id": "4a8e",
+      "id": 1,
       "seccionid": "1"
     },
     {
       "classId": 1,
       "professorId": 3,
-      "id": "f5cc",
+      "id": 2,
       "seccionid": "2"
     },
     {
       "classId": 2,
       "professorId": 4,
-      "id": "4a8e",
+      "id": 3,
       "seccionid": "3"
     },
     {
       "classId": 2,
       "professorId": 4,
-      "id": "f5cc",
+      "id": 4,
       "seccionid": "4"
+    }
+  ],
+  "enrollments": [
+    {
+      "assignmentId": 1,
+      "studentId": 1,
+      "id": "cfef"
+    },
+    {
+      "assignmentId": 2,
+      "studentId": 2,
+      "id": "9181"
+    },
+    {
+      "assignmentId": 3,
+      "studentId": 1,
+      "id": "d678"
+    },
+    {
+      "assignmentId": 4,
+      "studentId": 2,
+      "id": "362d"
     }
   ],
   "sections": [
@@ -81,101 +103,7 @@
       "code": "101"
     }
   ],
-  "students": [
-    {
-      "id": "1",
-      "name": "juan",
-      "code": "123"
-    },
-    {
-      "id": "2",
-      "name": "willy",
-      "code": "456"
-    },
-    {
-      "id": "3",
-      "name": "Pedro",
-      "code": "789"
-    },
-    {
-      "id": "4",
-      "name": "diego",
-      "code": "101"
-    }
-  ],
-  "grades": [
-    {
-      "id": "1",
-      "assignmentId": "4a8e",
-      "studentId": 1,
-      "grade": 4
-    },
-    {
-      "id": "2",
-      "assignmentId": "4a8e",
-      "studentId": 2,
-      "grade": 5
-    },
-    {
-      "id": "3",
-      "assignmentId": "f5cc",
-      "studentId": 1,
-      "grade": 6
-    },
-    {
-      "id": "4",
-      "assignmentId": "f5cc",
-      "studentId": 2,
-      "grade": 7
-    }
-  ],
-  "enrollments": [
-    {
-      "classId": 1,
-      "studentId": 1,
-      "id": "cfef"
-    },
-    {
-      "classId": 1,
-      "studentId": 2,
-      "id": "9181"
-    },
-    {
-      "classId": 2,
-      "studentId": 1,
-      "id": "d678"
-    },
-    {
-      "classId": 2,
-      "studentId": 2,
-      "id": "362d"
-    }
-  ],
   "asistencias": [
-    {
-      "id": "16",
-      "classId": 2,
-      "studentId": 4,
-      "date": "2024-11-07",
-      "asistencia": "presente",
-      "horaInicio": "19"
-    },
-    {
-      "id": "17",
-      "classId": 2,
-      "studentId": 4,
-      "date": "2024-11-07",
-      "asistencia": "presente",
-      "horaInicio": "20"
-    },
-    {
-      "id": "18",
-      "classId": 2,
-      "studentId": 4,
-      "date": "2024-11-08",
-      "asistencia": "presente",
-      "horaInicio": "23"
-    },
     {
       "id": "19",
       "classId": 2,
@@ -185,12 +113,22 @@
       "horaInicio": "12"
     },
     {
-      "id": "1",
+      "id": "5",
       "classId": 2,
       "studentId": 4,
       "date": "2024-11-14",
       "asistencia": "presente",
-      "horaInicio": "10"
+      "horaInicio": "13",
+      "seccion": 4
+    },
+    {
+      "id": "6",
+      "classId": 2,
+      "studentId": 4,
+      "date": "2024-11-14",
+      "asistencia": "presente",
+      "horaInicio": "13",
+      "seccion": 3
     }
   ]
 }
