@@ -161,6 +161,7 @@ export class RegAsisPage implements OnInit {
       console.log('QR Code generated:', this.valorQr);
     } else {
       console.error('Debe seleccionar una materia y una sección.');
+      this.showToast('Debe seleccionar una materia y una sección.', 'warning');
     }
   }
 

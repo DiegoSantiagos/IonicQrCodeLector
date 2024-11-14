@@ -31,14 +31,15 @@ export class AsistenciaService {
     }
 
     prepararYRegistrarAsistencia(qrCode: string): Observable<any> {
-        const [userId, classId, date, hour] = qrCode.split(',');
+        const [userId, classId, date, hour, seccion] = qrCode.split(',');
         const asistenciaData = {
             id: this.generateUniqueId(),
             classId: parseInt(classId, 10),
             studentId: parseInt(userId, 10),
             date: date,
             asistencia: 'presente',
-            horaInicio: hour
+            horaInicio: hour,
+            seccion: parseInt(seccion, 10),
         };
         return this.registrarAsistencia(asistenciaData);
     }
