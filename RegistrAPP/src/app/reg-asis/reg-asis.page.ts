@@ -60,6 +60,7 @@ export class RegAsisPage implements OnInit {
       BarcodeScanner.removeAllListeners();
     }
   }
+
   loadAssignments() {
     if (!this.currentUser || !this.currentUser.id) {
       console.error('Usuario no autenticado o sin ID');
@@ -73,22 +74,29 @@ export class RegAsisPage implements OnInit {
       const classIds = professorAssignments.map(a => a.classId);
 
       this.http.get<any[]>('https://totem-tunel.uri1000.win/classes').subscribe(classes => {
+        console.log('Todas las clases:', classes);
         const uniqueAssignments: any[] = [];
         const seenClassNames = new Set();
 
         professorAssignments.forEach(assignment => {
-          const classInfo = classes.find(cls => cls.id === assignment.classId);
-          const className = classInfo ? classInfo.name : 'Desconocido';
+          const classInfo = classes.find(cls => Number(cls.id) === assignment.classId);
+          if (classInfo) {
+            console.log(`Clase encontrada para classId ${assignment.classId}:`, classInfo);
+            const className = classInfo.name;
 
-          if (!seenClassNames.has(className)) {
-            seenClassNames.add(className);
-            uniqueAssignments.push({
-              ...assignment,
-              className: className
-            });
+            if (!seenClassNames.has(className)) {
+              seenClassNames.add(className);
+              uniqueAssignments.push({
+                ...assignment,
+                className: className
+              });
+            }
+          } else {
+            console.warn(`No se encontró clase para classId ${assignment.classId}`);
           }
         });
 
+        this.sections = classes.filter(cls => classIds.includes(Number(cls.id)));
         this.assignments = uniqueAssignments;
         console.log('Asignaciones únicas con nombres de materias:', this.assignments);
       });
