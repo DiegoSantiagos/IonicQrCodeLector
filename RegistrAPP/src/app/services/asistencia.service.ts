@@ -45,7 +45,7 @@ export class AsistenciaService {
         return this.http.post(`${this.apiUrl}/asistencias`, datosDePrueba);
     }
 
-    prepararYRegistrarAsistencia(qrCode: string): Observable<AsistenciaData | ErrorResponse> {
+    prepararYRegistrarAsistencia(qrCode: string) {
         const [userId, classId, date, hour, seccion] = qrCode.split(',');
         const asistenciaData: AsistenciaData = {
             id: this.generateUniqueId(),
@@ -56,40 +56,9 @@ export class AsistenciaService {
             horaInicio: hour,
             seccion: parseInt(seccion, 10),
         };
-
-        // Verificar si el alumno está inscrito en la clase y sección correspondientes
-        return this.obtenerInscripciones().pipe(
-            map(inscripciones => {
-                const inscripcionValida = inscripciones.find(inscripcion =>
-                    inscripcion.studentId === asistenciaData.studentId &&
-                    inscripcion.classId === asistenciaData.classId &&
-                    inscripcion.seccionId === asistenciaData.seccion
-                );
-
-                if (!inscripcionValida) {
-                    throw new Error('El alumno no está inscrito en esta clase o sección.');
-                }
-
-                return asistenciaData;
-            }),
-            catchError(error => {
-                return of({ error: error.message });
-            }),
-            switchMap(result => {
-                if ('error' in result) {
-                    return of(result);
-                }
-                return this.registrarAsistencia(result as AsistenciaData).pipe(
-                    map(() => result as AsistenciaData),
-                    catchError(error => of({ error: error.message }))
-                );
-            })
-        );
+        return this.registrarAsistencia(asistenciaData);
     }
 
-    private obtenerInscripciones(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/enrollments`);
-    }
 
     private generateUniqueId(): string {
         const lastId = localStorage.getItem('lastUniqueId') || '0';

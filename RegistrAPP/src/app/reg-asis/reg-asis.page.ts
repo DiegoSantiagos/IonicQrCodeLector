@@ -223,6 +223,8 @@ export class RegAsisPage implements OnInit {
       return;
     }
 
+    // Verificar si el alumno pertenece a la sección y materia especificadas
+    console.log('Comparando con assignments:', this.assignments);
     const studentAssignment = this.assignments.find(assignment =>
       assignment.id.toString() === classId &&
       assignment.sections.some((section: { id: string }) => section.id.toString() === sectionId)
@@ -232,6 +234,7 @@ export class RegAsisPage implements OnInit {
       this.showToast('El alumno no pertenece a esta sección en esta materia', 'danger');
       return;
     }
+
 
     console.log('Enviando datos de asistencia al servidor...');
     this.asistenciaService.prepararYRegistrarAsistencia(qrCode).subscribe(
