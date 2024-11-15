@@ -14,9 +14,8 @@
         <ion-card-title>{{ asignatura.name }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        Código: {{ asignatura.code }}<br>
-        Asistencias: {{ asignatura.asistencias }}
-      </ion-card-content>
+        Código: {{ asignatura.code }}{{ asignatura.seccion }}<br>
+        Asistencias: {{ countAsistencias(asignatura.id, asignatura.seccion) }} </ion-card-content>
     </ion-card>
   </ng-container>
 </ion-content>

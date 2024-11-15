@@ -1,47 +1,56 @@
 import { Component, OnInit } from '@angular/core';
-import { AsistenciaService } from '../services/asistencia.service';
+import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { AsignaturaService } from '../services/asignatura.service';
-import { Router } from '@angular/router';
+import { AsistenciaService } from '../services/asistencia.service';
+
 @Component({
   selector: 'app-mis-asis',
   templateUrl: './mis-asis.page.html',
   styleUrls: ['./mis-asis.page.scss'],
 })
 export class MisAsisPage implements OnInit {
-  asistencias: any[] = [];
-  asignaturas: any[] = [];
   currentUser: any;
+  asignaturas: any[] = [];
+  asistencias: any[] = [];
 
   constructor(
-    private asistenciaService: AsistenciaService,
     private authService: AuthService,
+    private router: Router,
     private asignaturaService: AsignaturaService,
-    private router: Router
+    private asistenciaService: AsistenciaService
   ) { }
 
   ngOnInit() {
     this.currentUser = this.authService.getCurrentUser();
+    console.log('Current User:', this.currentUser);
     if (!this.currentUser || !this.currentUser.id) {
       console.error('Usuario no autenticado o sin ID');
       this.router.navigate(['/login']);
       return;
     }
-    this.obtenerAsignaturasYAsistencias();
+    this.loadAsignaturas();
+    this.loadAsistencias();
   }
 
-  obtenerAsignaturasYAsistencias() {
-    this.asignaturaService.getAsignaturasByStudentId(this.currentUser.id).subscribe(asignaturas => {
-      this.asignaturas = asignaturas;
-      this.asistenciaService.obtenerAsistencias().subscribe(asistencias => {
-        this.asistencias = asignaturas.map(asignatura => {
-          const asistencia = asistencias.find(a => a.codigo === asignatura.code && a.alumno === this.currentUser.name);
-          return {
-            ...asignatura,
-            asistencias: asistencia ? 1 : 0 // Puedes ajustar esto para contar múltiples asistencias si es necesario
-          };
-        });
-      });
+  loadAsignaturas() {
+    this.asignaturaService.getAsignaturasByStudentId(this.currentUser.id).subscribe(data => {
+      this.asignaturas = data;
+      console.log('Asignaturas:', this.asignaturas);
     });
+  }
+
+  loadAsistencias() {
+    this.asistenciaService.obtenerAsistencias().subscribe(data => {
+      console.log('Todas las asistencias:', data);
+      this.asistencias = data.filter(a => a.studentId === this.currentUser.id);
+      console.log('Asistencias del estudiante:', this.asistencias);
+    });
+  }
+
+  countAsistencias(classId: number, seccion: string): number {
+    const filteredAsistencias = this.asistencias.filter(a => a.classId === classId && a.seccion.toString() === seccion && a.studentId === this.currentUser.id);
+    console.log(`Asistencias for classId ${classId} and seccion ${seccion}:`, filteredAsistencias);
+    return filteredAsistencias.length;
   }
 }

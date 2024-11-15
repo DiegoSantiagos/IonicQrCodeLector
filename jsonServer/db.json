@@ -22,7 +22,7 @@
       "id": "4",
       "name": "diego",
       "role": "profesor",
-      "clave": "12345"
+      "clave": "ab"
     }
   ],
   "classes": [
@@ -111,6 +111,33 @@
       "date": "2024-11-15",
       "asistencia": "presente",
       "horaInicio": "12",
+      "seccion": 4
+    },
+    {
+      "id": "6",
+      "classId": 2,
+      "studentId": 4,
+      "date": "2024-11-15",
+      "asistencia": "presente",
+      "horaInicio": "12",
+      "seccion": 4
+    },
+    {
+      "id": "7",
+      "classId": 2,
+      "studentId": 4,
+      "date": "2024-11-15",
+      "asistencia": "presente",
+      "horaInicio": "13",
+      "seccion": 4
+    },
+    {
+      "id": "8",
+      "classId": 2,
+      "studentId": 4,
+      "date": "2024-11-15",
+      "asistencia": "presente",
+      "horaInicio": "13",
       "seccion": 4
     }
   ]

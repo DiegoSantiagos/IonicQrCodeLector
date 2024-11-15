@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 @Injectable({
@@ -15,9 +15,18 @@ export class AsignaturaService {
         return this.http.get<any[]>(`${this.apiUrl}/enrollments?studentId=${studentId}`).pipe(
             switchMap(enrollments => {
                 const classIds = enrollments.map(enrollment => enrollment.classId);
-                return this.http.get<any[]>(`${this.apiUrl}/classes?id=${classIds.join('&id=')}`);
+                const sectionIds = enrollments.map(enrollment => enrollment.seccionid);
+                return forkJoin([
+                    this.http.get<any[]>(`${this.apiUrl}/classes?id=${classIds.join('&id=')}`),
+                    this.http.get<any[]>(`${this.apiUrl}/sections?id=${sectionIds.join('&id=')}`)
+                ]);
             }),
-            map(response => response)
+            map(([classes, sections]) => {
+                return classes.map(cl => {
+                    const section = sections.find(sec => sec.id === cl.id);
+                    return { ...cl, seccion: section ? section.code : '' };
+                });
+            })
         );
     }
 }
