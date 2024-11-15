@@ -120,69 +120,6 @@ export class RegAsisPage implements OnInit {
     });
   }
 
-  loadSectionsAlumnos() {
-    if (!this.currentUser || !this.currentUser.id) {
-      console.error('Usuario no autenticado o sin ID');
-      return;
-    }
-
-    this.http.get<any[]>('https://totem-tunel.uri1000.win/enrollments').subscribe(enrollments => {
-      const studentEnrollments = enrollments.filter(e => e.studentId.toString() === this.currentUser.id);
-      const assignmentIds = studentEnrollments.map(e => e.assignmentId);
-      console.log('Asignaturas inscritas por el alumno:', assignmentIds);
-
-      this.http.get<any[]>('https://totem-tunel.uri1000.win/assignments').subscribe(assignments => {
-        const studentAssignments = assignments.filter(assignment => assignmentIds.includes(assignment.id));
-        const classIds = studentAssignments.map(a => a.classId);
-
-        this.http.get<any[]>('https://totem-tunel.uri1000.win/classes').subscribe(classes => {
-          this.assignments = classes.filter(cls => classIds.includes(cls.id));
-          console.log('Asignaturas filtradas para el alumno:', this.assignments);
-        });
-      });
-    });
-  }
-
-  // generateQRCode() {
-  //   const currentDate = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
-  //   const currentHour = new Date().getHours(); // Obtener la hora actual (sin los minutos)
-
-  //   console.log('Current User:', this.currentUser);
-  //   console.log('Assignments:', this.assignments);
-
-  //   if (this.assignments && this.assignments.length > 0 && this.currentUser && this.currentUser.id) {
-  //     const assignment = this.assignments.find(a => a.professorId.toString() === this.currentUser.id);
-  //     if (assignment) {
-  //       this.http.get<any[]>(`https://totem-tunel.uri1000.win/classes?id=${assignment.classId}`).subscribe(
-  //         classes => {
-  //           if (classes.length > 0) {
-  //             if (this.currentUser.id && assignment.classId && currentDate && currentHour) {
-  //               this.valorQr = `${this.currentUser.id},${assignment.classId},${currentDate},${currentHour}`;
-  //               console.log('QR Code generated:', this.valorQr, 'y los datos son los siguientes', this.currentUser.id, assignment.classId, currentDate, currentHour);
-  //             } else {
-  //               console.error('Uno de los valores está vacío:', {
-  //                 userId: this.currentUser.id,
-  //                 classId: assignment.classId,
-  //                 currentDate,
-  //                 currentHour
-  //               });
-  //             }
-  //           } else {
-  //             console.error('No se encontraron clases para el assignment:', assignment.classId);
-  //           }
-  //         },
-  //         error => {
-  //           console.error('Error al obtener las clases:', error);
-  //         }
-  //       );
-  //     } else {
-  //       console.error('No se encontró un assignment para el usuario actual.');
-  //     }
-  //   } else {
-  //     console.error('Asignaciones o usuario actual no están definidos correctamente.');
-  //   }
-  // }
-
   generateQRCode() {
     const currentDate = new Date().toISOString().split('T')[0];
     const currentHour = new Date().getHours();
@@ -196,13 +133,6 @@ export class RegAsisPage implements OnInit {
     }
   }
 
-  loadEnrollments() {
-
-    this.http.get<any[]>('https://totem-tunel.uri1000.win/enrollments').subscribe(enrollments => {
-      this.enrollments = enrollments.filter(enrollment => enrollment.studentId.toString() === this.currentUser.id);
-      console.log('Inscripciones:', this.enrollments);
-    });
-  }
 
   async startScan() {
     const modal = await this.modalController.create({
@@ -224,13 +154,68 @@ export class RegAsisPage implements OnInit {
     }
   }
 
+  loadSectionsAlumnos() {
+    if (!this.currentUser || !this.currentUser.id) {
+      console.error('Usuario no autenticado o sin ID');
+      return;
+    }
+
+    this.http.get<any[]>('https://totem-tunel.uri1000.win/enrollments').subscribe(enrollments => {
+      const studentEnrollments = enrollments.filter(e => e.studentId.toString() === this.currentUser.id);
+      const assignmentIds = studentEnrollments.map(e => e.assignmentId.toString());
+      console.log('Asignaturas inscritas por el alumno:', assignmentIds);
+
+      this.http.get<any[]>('https://totem-tunel.uri1000.win/assignments').subscribe(assignments => {
+        console.log('Asignaciones obtenidas:', assignments);
+        const studentAssignments = assignments.filter(assignment => assignmentIds.includes(assignment.id.toString()));
+        const classIds = studentAssignments.map(a => a.classId.toString());
+        console.log('IDs de clases para las asignaturas del alumno:', classIds);
+
+        this.http.get<any[]>('https://totem-tunel.uri1000.win/classes').subscribe(classes => {
+          console.log('Clases obtenidas:', classes);
+          const filteredClasses = classes.filter(cls => classIds.includes(cls.id.toString()));
+
+          this.http.get<any[]>('https://totem-tunel.uri1000.win/sections').subscribe(sections => {
+            console.log('Secciones obtenidas:', sections);
+            this.assignments = filteredClasses.map(cls => {
+              const classSections = sections.filter(section => studentAssignments.some(a => a.classId.toString() === cls.id.toString() && a.seccionid.toString() === section.id.toString()));
+              return {
+                ...cls,
+                sections: classSections
+              };
+            });
+            console.log('Asignaturas filtradas para el alumno con secciones:', this.assignments);
+          }, error => {
+            console.error('Error al obtener las secciones:', error);
+          });
+        }, error => {
+          console.error('Error al obtener las clases:', error);
+        });
+      }, error => {
+        console.error('Error al obtener las asignaciones:', error);
+      });
+    }, error => {
+      console.error('Error al obtener las inscripciones:', error);
+    });
+  }
+
+  loadEnrollments() {
+    this.http.get<any[]>('https://totem-tunel.uri1000.win/enrollments').subscribe(enrollments => {
+      this.enrollments = enrollments.filter(enrollment => enrollment.studentId.toString() === this.currentUser.id);
+      console.log('Inscripciones:', this.enrollments);
+    });
+  }
+
   async registrarAsistencia(qrCode: string) {
     if (!qrCode) {
       this.showToast('Código QR no proporcionado.', 'warning');
       return;
     }
-
+    // this.showToast('Registrando asistencia...', 'primary');
     const [userId, classId, date, hour, sectionId] = qrCode.split(',');
+    console.log('Datos del QR:', { qrCode });
+    this.mostrar = qrCode;
+
 
     if (!this.currentUser || !this.currentUser.id) {
       this.showToast('Usuario no autenticado o sin ID', 'danger');
@@ -238,16 +223,13 @@ export class RegAsisPage implements OnInit {
       return;
     }
 
-    // Verificar si el alumno está inscrito en la clase y sección correspondientes
-    const studentId = this.currentUser.id;
-    const studentEnrollment = this.enrollments.find(enrollment =>
-      enrollment.studentId.toString() === studentId &&
-      enrollment.classId.toString() === classId &&
-      enrollment.sectionId.toString() === sectionId
+    const studentAssignment = this.assignments.find(assignment =>
+      assignment.id.toString() === classId &&
+      assignment.sections.some((section: { id: string }) => section.id.toString() === sectionId)
     );
 
-    if (!studentEnrollment) {
-      this.showToast('El alumno no está inscrito en esta clase o sección.', 'danger');
+    if (!studentAssignment) {
+      this.showToast('El alumno no pertenece a esta sección en esta materia', 'danger');
       return;
     }
 
@@ -279,6 +261,7 @@ export class RegAsisPage implements OnInit {
       }
     );
   }
+
 
   async showToast(message: string, color: string) {
     const toast = await this.toastController.create({

@@ -27,12 +27,12 @@
   ],
   "classes": [
     {
-      "id": 1,
+      "id": "1",
       "name": "matematicas",
       "code": "mta"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "lenguaje",
       "code": "lng"
     }
@@ -41,25 +41,25 @@
     {
       "classId": 1,
       "professorId": 3,
-      "id": 1,
+      "id": "1",
       "seccionid": "1"
     },
     {
       "classId": 1,
       "professorId": 3,
-      "id": 2,
+      "id": "2",
       "seccionid": "2"
     },
     {
       "classId": 2,
       "professorId": 4,
-      "id": 3,
+      "id": "3",
       "seccionid": "3"
     },
     {
       "classId": 2,
       "professorId": 4,
-      "id": 4,
+      "id": "4",
       "seccionid": "4"
     }
   ],
