@@ -14,6 +14,7 @@ actualmente estoy usando mi dominio en algunas partes las que deberán ser cambi
   - [QrCode](#qrcode)
   - [Jsonserver](#jsonserver)
   - [Geolocalización](#geolocalización)
+  - [Pruebas](#pruebas)
 
 ## Instalación de dependencias
 
@@ -204,4 +205,10 @@ npm install @ionic-native/core
 
 ```sh
 npm install @ionic-native/google-maps
+```
+
+## Pruebas 
+
+```sh
+ng test
 ```
